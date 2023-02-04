@@ -126,7 +126,8 @@ xtf_sss_ping process_side_scan_ping(XTFPINGHEADER *PingHeader, XTFFILEHEADER *XT
    ping.heading_ = M_PI/180.*PingHeader->SensorHeading;
    ping.heading_ = 0.5*M_PI-ping.heading_; // TODO: need to keep this for old data
    ping.roll_ = M_PI/180.*PingHeader->SensorRoll;
-   ping.pitch_ =  M_PI/180.*PingHeader->SensorPitch;
+   ping.pitch_ =  -M_PI/180.*PingHeader->SensorPitch;
+   ping.altitude_= PingHeader->SensorPrimaryAltitude;
    ping.sound_vel_ = PingHeader->SoundVelocity;
 
    boost::posix_time::ptime data_time(boost::gregorian::date(PingHeader->Year, PingHeader->Month, PingHeader->Day), boost::posix_time::hours(PingHeader->Hour)+boost::posix_time::minutes(PingHeader->Minute)+boost::posix_time::seconds(PingHeader->Second)+boost::posix_time::milliseconds(10*int(PingHeader->HSeconds))); 
@@ -205,20 +206,20 @@ xtf_sss_ping process_side_scan_ping(XTFPINGHEADER *PingHeader, XTFFILEHEADER *XT
       ping_channel->time_duration = ChanHeader->TimeDuration;
       ping_channel->slant_range = ChanHeader->SlantRange;
 
-      // Do whatever processing on the sidescan imagery here.
-      //cout << "Processing a side scan ping!!" << endl;
-      cout << "Size of short: " << sizeof(short) << endl;
-      cout << "Channel number: " << int(ChannelNumber) << endl;
-      //cout << "Channel name: " << ChannelName << endl;
-      cout << "Bytes per sample: " << int(BytesPerSample) << endl;
-      cout << "Samples per chan: " << int(SamplesPerChan) << endl;
-      cout << "Ground range: " << int(ChanHeader->GroundRange) << endl; // seems to always be 0
-      cout << "Slant range: " << int(ChanHeader->SlantRange) << endl;
-      cout << "Time duration: " << ChanHeader->TimeDuration << endl;
-      cout << "SecondsPerPing: " << ChanHeader->SecondsPerPing << endl; // seems to always be 0
-      cout << "GAIN Code: " << ChanHeader->GainCode << endl;
-      cout << "Initial GAIN Code: " << ChanHeader->InitialGainCode << endl;
-      cout << "Weight: " << ChanHeader->Weight << endl;
+    //   // Do whatever processing on the sidescan imagery here.
+    //   //cout << "Processing a side scan ping!!" << endl;
+    //   cout << "Size of short: " << sizeof(short) << endl;
+    //   cout << "Channel number: " << int(ChannelNumber) << endl;
+    //   //cout << "Channel name: " << ChannelName << endl;
+    //   cout << "Bytes per sample: " << int(BytesPerSample) << endl;
+    //   cout << "Samples per chan: " << int(SamplesPerChan) << endl;
+    //   cout << "Ground range: " << int(ChanHeader->GroundRange) << endl; // seems to always be 0
+    //   cout << "Slant range: " << int(ChanHeader->SlantRange) << endl;
+    //   cout << "Time duration: " << ChanHeader->TimeDuration << endl;
+    //   cout << "SecondsPerPing: " << ChanHeader->SecondsPerPing << endl; // seems to always be 0
+    //   cout << "GAIN Code: " << ChanHeader->GainCode << endl;
+    //   cout << "Initial GAIN Code: " << ChanHeader->InitialGainCode << endl;
+    //   cout << "Weight: " << ChanHeader->Weight << endl;
 
       // skip past the imagery;
       Ptr += BytesThisChannel;
@@ -268,31 +269,31 @@ xtf_sss_ping::PingsT read_xtf_file(int infl, XTFFILEHEADER* XTFFileHeader, unsig
         xtf_sss_ping ping = process_side_scan_ping((XTFPINGHEADER*)PingHeader, XTFFileHeader);
         ping.first_in_file_ = false;
         pings.push_back(ping);
-        cout << "SONAR "
-             << int(PingHeader->Year) << " "
-             << int(PingHeader->Month) << " "
-             << int(PingHeader->Day) << " "
-             << int(PingHeader->Hour) << " "
-             << int(PingHeader->Minute) << " "
-             << int(PingHeader->Second) << " "
-             << int(PingHeader->HSeconds) << " "
-             << "Sound vel=" << PingHeader->SoundVelocity << " "
-             << "Computed sound vel=" << PingHeader->ComputedSoundVelocity << " "
-             << "Y=" << PingHeader->SensorYcoordinate << " "
-             << "X=" << PingHeader->SensorXcoordinate << " "
-             << "altitude=" << PingHeader->SensorPrimaryAltitude << " "
-             << "depth=" << PingHeader->SensorDepth << " "
-             << "pitch=" << PingHeader->SensorPitch << " "
-             << "roll=" << PingHeader->SensorRoll << " "
-             << "heading=" << PingHeader->SensorHeading << " "  // [h] Fish heading in degrees
-             << "heave=" << PingHeader->Heave << " "            // Sensor heave at start of ping. 
-                           // Positive value means sensor moved up.
-             << "yaw=" << PingHeader->Yaw << endl;              // Sensor yaw.  Positive means turn to right.
-        cout << "Tilt angle 0: " << XTFFileHeader->ChanInfo[0].TiltAngle << endl;        // Typically 30 degrees
-        cout << "Beam width 0: " << XTFFileHeader->ChanInfo[0].BeamWidth << endl;        // 3dB beam width, Typically 50 degrees
-        cout << "Tilt angle 1: " << XTFFileHeader->ChanInfo[1].TiltAngle << endl;        // Typically 30 degrees
-        cout << "Beam width 1: " << XTFFileHeader->ChanInfo[1].BeamWidth << endl;        // 3dB beam width, Typically 50 degrees
-        cout << ping.time_string_ << endl;
+        // cout << "SONAR "
+        //      << int(PingHeader->Year) << " "
+        //      << int(PingHeader->Month) << " "
+        //      << int(PingHeader->Day) << " "
+        //      << int(PingHeader->Hour) << " "
+        //      << int(PingHeader->Minute) << " "
+        //      << int(PingHeader->Second) << " "
+        //      << int(PingHeader->HSeconds) << " "
+        //      << "Sound vel=" << PingHeader->SoundVelocity << " "
+        //      << "Computed sound vel=" << PingHeader->ComputedSoundVelocity << " "
+        //      << "Y=" << PingHeader->SensorYcoordinate << " "
+        //      << "X=" << PingHeader->SensorXcoordinate << " "
+        //      << "altitude=" << PingHeader->SensorPrimaryAltitude << " "
+        //      << "depth=" << PingHeader->SensorDepth << " "
+        //      << "pitch=" << PingHeader->SensorPitch << " "
+        //      << "roll=" << PingHeader->SensorRoll << " "
+        //      << "heading=" << PingHeader->SensorHeading << " "  // [h] Fish heading in degrees
+        //      << "heave=" << PingHeader->Heave << " "            // Sensor heave at start of ping. 
+        //                    // Positive value means sensor moved up.
+        //      << "yaw=" << PingHeader->Yaw << endl;              // Sensor yaw.  Positive means turn to right.
+        // cout << "Tilt angle 0: " << XTFFileHeader->ChanInfo[0].TiltAngle << endl;        // Typically 30 degrees
+        // cout << "Beam width 0: " << XTFFileHeader->ChanInfo[0].BeamWidth << endl;        // 3dB beam width, Typically 50 degrees
+        // cout << "Tilt angle 1: " << XTFFileHeader->ChanInfo[1].TiltAngle << endl;        // Typically 30 degrees
+        // cout << "Beam width 1: " << XTFFileHeader->ChanInfo[1].BeamWidth << endl;        // 3dB beam width, Typically 50 degrees
+        // cout << ping.time_string_ << endl;
     }
 
     if (!pings.empty()) {
