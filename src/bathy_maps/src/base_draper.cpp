@@ -324,9 +324,11 @@ Eigen::VectorXd BaseDraper::compute_model_intensities(const Eigen::VectorXd& dis
         double SS = 10.*log10((1. - alpha)*DL + alpha*SL);
         double NL = 10.*log10(noise_dist(generator));
         //intensities(j) = 1./(-25.+42.)*(42. + SS - TL + NL); // log(1.+1.73*200.*TL*SS*NL);
-        intensities(j) = 1./(10.)*(9. + SS + NL); // log(1.+1.73*200.*TL*SS*NL);
-        intensities(j) = std::min(std::max(intensities(j), 0.), 1.);
-        //intensities(j) = DL*DL;
+        // intensities(j) = 1./(10.)*(9. + SS + NL); // log(1.+1.73*200.*TL*SS*NL);
+        // intensities(j) = 1./(10.)*(9. + SS ); // ingore noise, simplist lambertian model
+
+        // intensities(j) = std::min(std::max(intensities(j), 0.), 1.);
+        intensities(j) = DL*DL;
         //10*log(1.73*200.)-log(TL)+log(SS)+NL
     }
 
