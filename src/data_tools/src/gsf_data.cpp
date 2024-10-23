@@ -177,10 +177,7 @@ mbes_ping::PingsT convert_pings(gsf_mbes_ping::PingsT& pings)
         //ping.pos_ = new_ping.pos_;
         int i = 0;
         for (const Eigen::Vector3d& beam : ping.beams) {
-            if (beam(2) > -5. || beam(2) < -25.) {
-                ++i;
-                continue;
-            }
+            
             Eigen::Matrix3d Rz = Eigen::AngleAxisd(new_ping.heading_, Eigen::Vector3d::UnitZ()).matrix();
             /*Eigen::Matrix3d Ry = Eigen::AngleAxisd(new_ping.pitch_, Eigen::Vector3d::UnitY()).matrix();
             Eigen::Matrix3d Rx = Eigen::AngleAxisd(new_ping.roll_, Eigen::Vector3d::UnitX()).matrix();
@@ -435,9 +432,9 @@ gsf_mbes_ping::PingsT parse_file(const boost::filesystem::path& file)
             }
             if (records.mb_ping.heading != 0) {
                 ping.heading_ = M_PI/180.*records.mb_ping.heading;
-                ping.heading_ = 0.5*M_PI-ping.heading_; // TODO: need to keep this for old data
+                ping.heading_ = 0.5*M_PI-ping.heading_; // NED to ENU
                 ping.roll_ = M_PI/180.*records.mb_ping.roll;
-                ping.pitch_ = M_PI/180.*records.mb_ping.pitch;
+                ping.pitch_ = -M_PI/180.*records.mb_ping.pitch; // NED to ENU
             }
             else {
                 ping.heading_ = ping.roll_ = ping.pitch_ = 0.;

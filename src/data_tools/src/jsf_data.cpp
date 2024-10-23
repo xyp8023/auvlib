@@ -186,9 +186,9 @@ jsf_sss_ping read_datagram<jsf_sss_ping, jsf_sonar_data_msg_header>(std::ifstrea
     jsf_sss_ping_side ping_side;
     ping.frequency = jsf_sonar_data_hdr.spl_freq_in_hz;
     ping.sound_vel = jsf_sonar_data_hdr.sound_speed_in_m_per_s;
-    ping.rpy = Eigen::Vector3d(jsf_sonar_data_hdr.roll, jsf_sonar_data_hdr.pitch, jsf_sonar_data_hdr.compass_heading);
+    ping.rpy = Eigen::Vector3d(jsf_sonar_data_hdr.roll, -jsf_sonar_data_hdr.pitch, jsf_sonar_data_hdr.compass_heading); // minus sign for pitch: NED to ENU
     ping.rpy.head<2>() = M_PI/32768.*ping.rpy.head<2>();
-    ping.rpy[2] = .5*M_PI - M_PI/180.*0.01*ping.rpy[2];
+    ping.rpy[2] = 0.5*M_PI - M_PI/180.*0.01*ping.rpy[2]; //  NED to ENU
 
     // NOTE: this is only valid if coord_units == 2
     ping.lat_ = 0.0001/60.*double(jsf_sonar_data_hdr.y_coord);

@@ -124,9 +124,9 @@ xtf_sss_ping process_side_scan_ping(XTFPINGHEADER *PingHeader, XTFFILEHEADER *XT
    tie(northing, easting, utm_zone) = lat_long_utm::lat_long_to_UTM(ping.lat_, ping.long_);
    ping.pos_ = Eigen::Vector3d(easting, northing, -PingHeader->SensorDepth);
    ping.heading_ = M_PI/180.*PingHeader->SensorHeading;
-   ping.heading_ = 0.5*M_PI-ping.heading_; // TODO: need to keep this for old data
+   ping.heading_ = 0.5*M_PI-ping.heading_; // NED to ENU
    ping.roll_ = M_PI/180.*PingHeader->SensorRoll;
-   ping.pitch_ =  M_PI/180.*PingHeader->SensorPitch;
+   ping.pitch_ =  -M_PI/180.*PingHeader->SensorPitch; // NED to ENU
    ping.sound_vel_ = PingHeader->SoundVelocity;
 
    boost::posix_time::ptime data_time(boost::gregorian::date(PingHeader->Year, PingHeader->Month, PingHeader->Day), boost::posix_time::hours(PingHeader->Hour)+boost::posix_time::minutes(PingHeader->Minute)+boost::posix_time::seconds(PingHeader->Second)+boost::posix_time::milliseconds(10*int(PingHeader->HSeconds))); 

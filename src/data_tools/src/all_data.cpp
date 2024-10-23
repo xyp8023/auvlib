@@ -244,7 +244,7 @@ all_mbes_ping read_datagram<all_mbes_ping, all_xyz88_datagram>(std::istream& inp
 	new_ping.id_ = header.ping_count;
 	//new_ping.heading_ = header.heading;
     new_ping.heading_ = M_PI/180.*double(header.heading)*0.01;
-    new_ping.heading_ = 0.5*M_PI-new_ping.heading_; // this basically converts to yaw, should have that as marker instead
+    new_ping.heading_ = 0.5*M_PI-new_ping.heading_; // NED to ENU
 	new_ping.sound_vel_ = header.sound_vel;
 	new_ping.transducer_depth_ = header.transducer_depth;
     tie(new_ping.time_stamp_, new_ping.time_string_) = parse_all_time(header.date, header.time);
@@ -290,7 +290,7 @@ all_nav_entry read_datagram<all_nav_entry, all_position_datagram>(std::istream& 
 	entry.long_ = double(header.longitude)/10000000.;
     entry.depth_ = stof(strs[6]);
 	entry.heading_ = M_PI/180.*double(header.heading)*0.01;
-    entry.heading_ = 0.5*M_PI-entry.heading_; // this basically converts to yaw
+    entry.heading_ = 0.5*M_PI-entry.heading_; // NED to ENU
 	entry.course_over_ground_ = double(header.course_over_ground)*0.01;
     tie(entry.time_stamp_, entry.time_string_) = parse_all_time(header.date, header.time);
 
@@ -327,10 +327,10 @@ all_nav_attitude read_datagram<all_nav_attitude, all_attitude_datagram>(std::ist
 	for (int i = 0; i < header.nbr_entries; ++i) {
 		input.read(reinterpret_cast<char*>(&meas), sizeof(meas));
         sample.ms_since_start = meas.ms_since_start;
-        sample.pitch = M_PI/180.*0.01*double(meas.pitch);
+        sample.pitch = -M_PI/180.*0.01*double(meas.pitch); // NED to ENU
         sample.roll = M_PI/180.*0.01*double(meas.roll);
         sample.heading = M_PI/180.*0.01*double(meas.heading);
-        //sample.heading = 0.5*M_PI-sample.heading; // this basically converts to yaw, should have that as marker instead
+        sample.heading = 0.5*M_PI-sample.heading; // NED to ENU
         sample.heave = 0.01*double(meas.heave);
         entry.samples.push_back(sample);
 	}

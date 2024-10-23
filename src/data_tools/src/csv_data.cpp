@@ -189,8 +189,8 @@ csv_nav_entry::EntriesT parse_file(const boost::filesystem::path& file)
         entry.pos_ = Eigen::Vector3d(x, y, z);
         entry.vel_ = Eigen::Vector3d(vx, vy, vz);
         entry.heading_ = M_PI/180.*heading;
-        entry.heading_ = 0.5*M_PI-entry.heading_; // TODO: need to keep this for old data. basically heading -> yaw
-        entry.pitch_ = M_PI/180.*pitch;
+        entry.heading_ = 0.5*M_PI-entry.heading_; // NED to ENU
+        entry.pitch_ = -M_PI/180.*pitch; // NED to ENU
         entry.roll_ = M_PI/180.*roll;
         entry.heading_std_ = M_PI/180.*heading_std;
         entry.pitch_std_ = M_PI/180.*pitch_std;
